@@ -41,12 +41,14 @@ public class Matrix implements Algebraic{
     }
 
     public Matrix multiply(Algebraic other) {
+        int size = this.mat.length * ((Matrix) other).getMat()[0].length;
+        float result = 0;
         if (other instanceof Matrix) {
-            float[][] newMatArr = new float[this.mat.length * ((Matrix) other).getMat()[0].length][];
+            float[][] newMatArr = new float[size][];
             if (this.mat[0].length == ((Matrix) other).getMat().length) {
                 for (int i = 0; i < newMatArr.length; i++) {
                     for (int k = 0; k < newMatArr[i].length; i++) {
-                        newMatArr[i][k] 
+                        result += 
                     }
                 }
             }

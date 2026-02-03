@@ -52,18 +52,18 @@ public class Matrix implements Algebraic{
             if (this.mat[0].length == object.getMat().length) {
                 int rows = this.mat.length;
                 int cols = object.getMat()[0].length;
-                int common = this.mat[0].length;
-                float[][] newMatArr = new float[rows][cols];
+                float[][] newMatrixArr = new float[rows][cols];
+                float result = 0;
                 for (int i = 0; i < rows; i++) {
-                    for (int k = 0; k < cols; k++) {
-                        float result = 0;
-                        for (int j = 0; j < common; j++) {
-                            result += this.mat[i][j] * object.getMat()[j][k];
+                    for (int j = 0; j < cols; j++) {
+                        result = 0;
+                        for (int n = 0; n < object.getMat().length; n++) {
+                            result += this.mat[i][n] * object.getMat()[n][j];
                         }
-                        newMatArr[i][k] = result;
+                        newMatrixArr[i][j] = result;
                     }
                 }
-                return new Matrix(newMatArr);
+                return new Matrix(newMatrixArr);
             }
             else {
                 return null;
@@ -98,22 +98,29 @@ public class Matrix implements Algebraic{
             float[][] smallArr2 = new float[2][2];
             float[][] smallArr3 = new float[2][2];
 
-            smallArr1[0][0] = this.mat[1][1];
-            smallArr1[0][1] = this.mat[1][2];
-            smallArr1[1][0] = this.mat[2][1];
-            smallArr1[1][1] = this.mat[2][2];
+            for (int i = 0; i < 2; i++) {
+                for (int k = 0; k < 2; k++) {
+                    smallArr1[i][k] = this.mat[i+1][k+1];
+                }
+            }
             result += this.mat[0][0] * determinantOfTwo(new Matrix(smallArr1)).getVec()[0];
 
-            smallArr2[0][0] = this.mat[1][0];
-            smallArr2[0][1] = this.mat[1][2];
-            smallArr2[1][0] = this.mat[2][0];
-            smallArr2[1][1] = this.mat[2][2];
+            for (int i = 0; i < 2; i++) {
+                for (int k = 0; k < 2; k++) {
+                    if (k == 0) {
+                        smallArr2[i][k] = this.mat[i+1][k];
+                    } else {
+                        smallArr2[i][k] = this.mat[i+1][k+1];
+                    }
+                }
+            }
             result -= this.mat[0][1] * determinantOfTwo(new Matrix(smallArr2)).getVec()[0];
 
-            smallArr3[0][0] = this.mat[1][0];
-            smallArr3[0][1] = this.mat[1][1];
-            smallArr3[1][0] = this.mat[2][0];
-            smallArr3[1][1] = this.mat[2][1];
+            for (int i = 0; i < 2; i++) {
+                for (int k = 0; k < 2; k++) {
+                    smallArr3[i][k] = this.mat[i+1][k];
+                }
+            }
             result += this.mat[0][2] * determinantOfTwo(new Matrix(smallArr3)).getVec()[0];
 
             float[] newVecArr = new float[1];

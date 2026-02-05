@@ -54,7 +54,7 @@ public class LTMatrix extends Matrix {
             int otherCols = object.getMat()[0].length;
             if (rows == otherRows && cols == otherCols) {
                 for (int i = 0; i < rows; i++) {
-                    for (int k = 0; k < cols; k++) {
+                    for (int k = 0; k <= i; k++) {
                         if (k <= i) {
                             newMatrixArr[i][k] = matrixArr[i][k] + object.getMat()[i][k];
                         }
@@ -102,7 +102,7 @@ public class LTMatrix extends Matrix {
             int otherCols = object.getMat()[0].length;
             if (rows == otherRows && cols == otherCols) {
                 for (int i = 0; i < rows; i++) {
-                    for (int k = 0; k < cols; k++) {
+                    for (int k = 0; k <= i; k++) {
                         if (k <= i) {
                             newMatrixArr[i][k] = matrixArr[i][k] - object.getMat()[i][k];
                         }

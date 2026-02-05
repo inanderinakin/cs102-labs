@@ -181,13 +181,16 @@ public class Matrix implements Algebraic{
 
             float[] newVecArr = new float[1];
             newVecArr[0] = result;
-
+            float[][] newVec2DArr = new float[1][1];
+            newVec2DArr[0][0] = result;
+            this.mat = newVec2DArr;
             return new Vector(newVecArr);
         }
         else {
             return null;
         }
     }
+
 
     public Vector determinantOfTwo(Matrix other) {
         float[][] matArr = other.getMat();

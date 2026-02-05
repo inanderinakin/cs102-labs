@@ -384,6 +384,20 @@ public class App {
                 }
             }
             
+            boolean isLTM = true;
+
+            for (int i = 0; i < rows; i++) {
+                for (int k = 0; k < cols; k++) {
+                    if (k > i && inputArr[i][k] != 0) {
+                        isLTM = false;
+                    }
+                }
+            }
+            if (isLTM) {
+                System.out.println("Constructing the LTMatrix");
+            }
+
+            
             Matrix inputMatrix = new Matrix(inputArr);
             if (isStart) {
                 System.out.println(inputMatrix);
@@ -428,6 +442,7 @@ public class App {
                 }
                 output += " ".repeat(width);
             }
+            
             output += "|";
             System.out.print(output);
         }

@@ -14,6 +14,14 @@ public class Matrix implements Algebraic{
         return new Matrix(newMatArr);
     }
 
+    public void negateAll() {
+        for (int i = 0; i < this.mat.length; i++) {
+            for (int k = 0; k < this.mat[i].length; k++) {
+                this.mat[i][k] = this.mat[i][k] * -1;
+            }
+        }
+    }
+
     public Matrix add(Algebraic other) {
         if (other instanceof Matrix) {
             float[][] otherMat = ((Matrix) other).getMat();
@@ -187,5 +195,43 @@ public class Matrix implements Algebraic{
             }
         } 
         return false;
+    }
+
+    public int getCols() {
+        return this.mat[0].length;
+    }
+
+    public void printRow(int row) {
+        String output = "";
+
+        for (int i = 0; i < this.mat.length; i++) {
+            output += "|";
+            for (int k = 0; k < this.mat[row].length; k++) {
+                if (k > 0) {
+                    output += " ";
+                }
+                output += String.format("%.2f", this.mat[i][k]);
+            }
+            output += "|\n";
+        }
+
+        System.out.println(output);
+    }
+
+    public void printRow(int row, String symbol) {
+        String output = "";
+
+        for (int i = 0; i < this.mat.length; i++) {
+            output += symbol + "|";
+            for (int k = 0; k < this.mat[row].length; k++) {
+                if (k > 0) {
+                    output += " ";
+                }
+                output += String.format("%.2f", this.mat[i][k]);
+            }
+            output += "|\n";
+        }
+
+        System.out.println(output);
     }
 }

@@ -9,43 +9,10 @@ public class Matrix implements Algebraic{
         for (int i = 0; i < this.mat.length; i++) {
             for (int k = 0; k < this.mat[i].length; k++) {
                 newMatArr[i][k] = this.mat[i][k] * -1;
-            }
-        }
-        return new Matrix(newMatArr);
-    }
-
-    public void negateAll() {
-        for (int i = 0; i < this.mat.length; i++) {
-            for (int k = 0; k < this.mat[i].length; k++) {
                 this.mat[i][k] = this.mat[i][k] * -1;
             }
         }
-    }
-
-    public void addAll(Algebraic other) {
-        if (other instanceof Matrix) {
-            float[][] otherMat = ((Matrix) other).getMat();
-            if (this.mat.length == otherMat.length && this.mat[0].length == otherMat[0].length) {
-                for (int i = 0; i < this.mat.length; i++) {
-                    for (int k = 0; k < this.mat[0].length; k++) {
-                        this.mat[i][k] = this.mat[i][k] + otherMat[i][k];
-                    }
-                }
-            }
-        }
-    }
-
-    public void subtractAll(Algebraic other) {
-        if (other instanceof Matrix) {
-            float[][] otherMat = ((Matrix) other).getMat();
-            if (this.mat.length == otherMat.length && this.mat[0].length == otherMat[0].length) {
-                for (int i = 0; i < this.mat.length; i++) {
-                    for (int k = 0; k < this.mat[0].length; k++) {
-                        this.mat[i][k] = this.mat[i][k] - otherMat[i][k];
-                    }
-                }
-            }
-        }
+        return new Matrix(newMatArr);
     }
 
     public Matrix add(Algebraic other) {
@@ -56,6 +23,7 @@ public class Matrix implements Algebraic{
                 for (int i = 0; i < this.mat.length; i++) {
                     for (int k = 0; k < this.mat[0].length; k++) {
                         newMatArr[i][k] = this.mat[i][k] + otherMat[i][k];
+                        this.mat[i][k] = this.mat[i][k] + otherMat[i][k];
                     }
                 }
                 return new Matrix(newMatArr);
@@ -72,6 +40,7 @@ public class Matrix implements Algebraic{
                 for (int i = 0; i < this.mat.length; i++) {
                     for (int k = 0; k < this.mat[0].length; k++) {
                         newMatArr[i][k] = this.mat[i][k] - otherMat[i][k];
+                        this.mat[i][k] = this.mat[i][k] - otherMat[i][k];
                     }
                 }
                 return new Matrix(newMatArr);
@@ -97,6 +66,7 @@ public class Matrix implements Algebraic{
                         newMatrixArr[i][j] = result;
                     }
                 }
+                this.mat = newMatrixArr;
                 return new Matrix(newMatrixArr);
             }
             else {
@@ -117,28 +87,6 @@ public class Matrix implements Algebraic{
             return new Vector(newVecArr);
         }
         return null;
-    }
-
-    public void multiplyAll(Algebraic other) {
-        if (other instanceof Matrix) {
-            Matrix object = (Matrix) other;
-            if (this.mat[0].length == object.getMat().length) {
-                int rows = this.mat.length;
-                int cols = object.getMat()[0].length;
-                float[][] newMatrixArr = new float[rows][cols];
-                float result = 0;
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
-                        result = 0;
-                        for (int n = 0; n < object.getMat().length; n++) {
-                            result += this.mat[i][n] * object.getMat()[n][j];
-                        }
-                        newMatrixArr[i][j] = result;
-                    }
-                }
-                this.mat = newMatrixArr;
-            }
-        }
     }
 
     public Vector determinant() {
@@ -199,10 +147,6 @@ public class Matrix implements Algebraic{
         return new Vector(newVecArr); 
     }
 
-    public float[][] getMat() {
-        return this.mat;
-    }
-
     @Override
     public String toString() {
         String output = "";
@@ -248,10 +192,6 @@ public class Matrix implements Algebraic{
         return false;
     }
 
-    public int getCols() {
-        return this.mat[0].length;
-    }
-
     public void printRow(int row) {
         String output = "   |";
 
@@ -278,5 +218,13 @@ public class Matrix implements Algebraic{
         output += "|";
 
         System.out.print(output);
+    }
+
+    public float[][] getMat() {
+        return this.mat;
+    }
+
+    public int getCols() {
+        return this.mat[0].length;
     }
 }

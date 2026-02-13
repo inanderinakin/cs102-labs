@@ -1,0 +1,13 @@
+Student Name: İnan Derin Akın
+Student ID: 22503462
+Student Section: 2
+
+Thoughts on using Git and GitHub: I believe Git and Github are essential tools for projects involving
+more than one developer. It helps us to work with other developers by giving us useful tools to avoid
+any inconvenience. Even though I had no problem working with Git and Github on Assigment 1, we had some
+obstacles with my group friends while we are dealing with Assigment 2. We struggled to edit the message
+of a previous commit and branches and merges. However, we fixed these issues with the help of our TAs and
+our own research. Github has multiple advantages such as the web interface it gives to the developer for
+maximized efficiency, ability to create forks, issues through the web interface helps us to manage
+problems with clear visuals. One final advantage I noticed is to ability to view different repositories to
+find inspirations and find projects to contribute to.

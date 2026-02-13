@@ -11,6 +11,7 @@ public class App {
             if (alg instanceof Vector) {
                 Vector inputVector = (Vector) alg;
                 int cols = inputVector.getCols();
+                
                 System.out.println("Select an operation: ");
                 System.out.println("1: Negate");
                 System.out.println("2: Add");
@@ -136,25 +137,14 @@ public class App {
                     else if (choice == 6) {
                         Algebraic newAlg = inputAlgebraic(false);
                         if (newAlg instanceof Vector) {
-                            Vector newVector = (Vector) newAlg;
-                            boolean isEqual = inputVector.equals(newVector);
-                            int rowsToPrint = Math.max(cols, newVector.getCols());
-                            int midRow = (int) Math.floor(rowsToPrint / 2.0);
-                            for (int i = 0; i < rowsToPrint; i++) {
-                                if (i == midRow) {
-                                    printVectorRowOrBlank(inputVector, i);
-                                    printVectorRowOrBlank(newVector, i, "==");
-                                    System.out.print(" ==> " + isEqual);
-                                }
-                                else {
-                                    printVectorRowOrBlank(inputVector, i);
-                                    printVectorRowOrBlank(newVector, i);
-                                }
-                                System.out.print("\n");
+                            Vector object = (Vector) newAlg;
+                            boolean isEqual = false;
+                            if (object.equals(inputVector)) {
+                                isEqual = true;
                             }
                         }
                         else {
-                            System.out.println("Invalid operation");
+                            System.out.println("Invalid operationnnn");
                         }
                     }
                     else if (choice == 7) {
@@ -388,11 +378,12 @@ public class App {
 
             for (int i = 0; i < rows; i++) {
                 for (int k = 0; k < cols; k++) {
-                    if (k > i && inputArr[i][k] != 0) {
+                    if ((k > i && inputArr[i][k] != 0) || (rows != cols)) {
                         isLTM = false;
                     }
                 }
             }
+
             if (isLTM) {
                 System.out.println("Constructing the LTMatrix");
             }
@@ -405,66 +396,5 @@ public class App {
             return inputMatrix;
         }
         
-    }
-
-    private static void printVectorRowOrBlank(Vector vector, int row) {
-        if (row < vector.getCols()) {
-            vector.printRow(row);
-        }
-        else {
-            int width = String.format("%.2f", 0f).length();
-            System.out.print("   |" + " ".repeat(width) + "|");
-        }
-    }
-
-    private static void printVectorRowOrBlank(Vector vector, int row, String symbol) {
-        if (row < vector.getCols()) {
-            vector.printRow(row, symbol);
-        }
-        else {
-            int width = String.format("%.2f", 0f).length();
-            System.out.print(" " + symbol + " |" + " ".repeat(width) + "|");
-        }
-    }
-
-    private static void printMatrixRowOrBlank(Matrix matrix, int row) {
-        int rows = matrix.getMat().length;
-        int cols = rows > 0 ? matrix.getMat()[0].length : 0;
-        if (row < rows) {
-            matrix.printRow(row);
-        }
-        else {
-            int width = String.format("%.2f", 0f).length();
-            String output = "   |";
-            for (int k = 0; k < cols; k++) {
-                if (k > 0) {
-                    output += " ";
-                }
-                output += " ".repeat(width);
-            }
-            
-            output += "|";
-            System.out.print(output);
-        }
-    }
-
-    private static void printMatrixRowOrBlank(Matrix matrix, int row, String symbol) {
-        int rows = matrix.getMat().length;
-        int cols = rows > 0 ? matrix.getMat()[0].length : 0;
-        if (row < rows) {
-            matrix.printRow(row, symbol);
-        }
-        else {
-            int width = String.format("%.2f", 0f).length();
-            String output = " " + symbol + " |";
-            for (int k = 0; k < cols; k++) {
-                if (k > 0) {
-                    output += " ";
-                }
-                output += " ".repeat(width);
-            }
-            output += "|";
-            System.out.print(output);
-        }
     }
 }

@@ -4,7 +4,7 @@ public class Sand {
     private int x = 0;
     private int y = 0;
     private static int size = 10;
-    Color color = Color.yellow;
+    Color color = Color.decode("#CBBD93");
     
     public Sand(int x, int y) {
         this.x = x;

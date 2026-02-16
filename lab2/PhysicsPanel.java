@@ -11,16 +11,27 @@ import java.util.ArrayList;
 
 public class PhysicsPanel extends JPanel{
     int sandSize = Sand.getSize();
-    ArrayList<Sand> sandList = new ArrayList<>();
+    ArrayList<Sand> sandList = new ArrayList<>();   
     Timer timer = new Timer(100, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (Sand sand : sandList) {
-                if (sand.getY() <= getHeight() - sandSize*2) {
-                    sand.setY(sand.getY() + sandSize);
-                    repaint();
+            for (int i = 0; i < sandList.size(); i++) {
+                Sand sand = sandList.get(i);
+                int underY = sand.getY() + sandSize;
+                if (underY <= getHeight() - sandSize) {
+                    boolean blocked = false;
+                    for (int j = 0; j < sandList.size() && !blocked; j++) {
+                        Sand sand2 = sandList.get(j);
+                        if (sand2 != sand && sand.getX() == sand2.getX() && sand2.getY() == underY) {
+                            blocked = true;
+                        }
+                    }
+                    if (!blocked) {
+                        sand.setY(underY);
+                    }
                 }
             }
+            repaint();
         }
     });
 

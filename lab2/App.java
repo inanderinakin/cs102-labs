@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.MatteBorder;
 
 public class App {
     public static void main(String[] args) {
@@ -16,7 +15,7 @@ public class App {
 
         PhysicsPanel physicsPanel = new PhysicsPanel();
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
+        buttonPanel.setBackground(Color.gray);
 
         Button button1 = new Button("Hello");
         buttonPanel.add(button1);

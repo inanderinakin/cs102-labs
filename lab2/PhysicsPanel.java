@@ -114,11 +114,18 @@ public class PhysicsPanel extends JPanel{
                         Particle lighterBelow = null;
                         for (int j = 0; j < particleList.size(); j++) {
                             Particle particle2 = particleList.get(j);
+                            if (particle instanceof Seed) {
+                                if (particle2 != particle && particle.getX() == particle2.getX() && particle2.getY() == underY && !(particle2 instanceof Sand)) {
+                                    particleList.remove(particle);
+                                    repaint();
+                                }
+                            }
                             if (particle2 != particle && particle.getX() == particle2.getX() && particle2.getY() == underY
                                     && particle.getWeight() > particle2.getWeight() && particle2.getCanFall()) {
                                 lighterBelow = particle2;
                                 break;
-                            }                            
+                            } 
+
                         }
                         if (lighterBelow != null) {
                             int oldY = particle.getY();
@@ -355,7 +362,7 @@ public class PhysicsPanel extends JPanel{
                                     cactus.setGrowthLevel(cactus.growthLevel + 1);
                                 }
                             }
-                            if (isBlockedUp && !isBlockedLeftUp) {
+                            else if (isBlockedUp && !isBlockedLeftUp) {
                                 int leftProb = random.nextInt(0, 101);
                                 if (leftProb > 95) {
                                     particleList.add(new Cactus(cactus.getX() - particleSize, cactus.getY() - particleSize, cactus.getGrowthLevel() + 1));

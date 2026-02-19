@@ -13,6 +13,7 @@ import java.util.Random;
 
 public class PhysicsPanel extends JPanel{
     String particleMode = "Sand";
+    int updateCount = 0;
     int particleSize = Particle.getSize();
     ArrayList<Particle> particleList = new ArrayList<>(); 
     public boolean isTimerEnabled = true;
@@ -87,7 +88,7 @@ public class PhysicsPanel extends JPanel{
                         Particle particle2 = particleList.get(j);
                         if (particle2 != particle) {
                             if (particle.getWeight() <= particle2.getWeight()) {
-                                if (particle.getX() == particle2.getX() && particle2.getY() == underY) {
+                                if (particle.getX() == particle2.getX() && (particle2.getY() == underY || underY == getHeight())) {
                                     isBlockedDown = true;
                                     if (particle2 instanceof Sand) {
                                         isBlockingSand = true;
@@ -149,6 +150,15 @@ public class PhysicsPanel extends JPanel{
                         }
                         else if (particle instanceof Water) {
                             ((Water) particle).setFlowDirection(-1);
+                        }
+
+                        if (particle instanceof Seed ) {
+                            particleList.remove(particle);
+                            if (isBlockingSand) {
+                                int seedX = particle.getX();
+                                int seedY = particle.getY();
+                                particleList.add(new Cactus(seedX, seedY));
+                            }
                         }
 
                         if (canSlideLeftDown && !canSlideRightDown) {
@@ -285,8 +295,17 @@ public class PhysicsPanel extends JPanel{
                         }
                     }
                 }
+                else if (particle instanceof Cactus) {
+                    if (updateCount == 10) {
+
+                    }
+                }
             }
         }
+        if (updateCount == 10) {
+            updateCount = 0;
+        }
+        updateCount++;
     }
 
     boolean isOccupied(int x, int y) {

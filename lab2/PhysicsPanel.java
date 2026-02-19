@@ -8,17 +8,59 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class PhysicsPanel extends JPanel{
     String particleMode = "Sand";
     int particleSize = Particle.getSize();
     ArrayList<Particle> particleList = new ArrayList<>(); 
+    public boolean isTimerEnabled = true;
+
     Timer timer = new Timer(35, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (int i = particleList.size() - 1; i >= 0; i--) {
-                Particle particle = particleList.get(i);
+            step();
+            if (mouseHeld) {
+                createParticle();
+            }
+        }
+    });
+
+    boolean mouseHeld = false;
+    int mouseX = 0;
+    int mouseY = 0;
+
+    MouseInputAdapter mouse = new MouseInputAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            mouseHeld = true;
+            mouseX = (e.getX() / particleSize) * particleSize;
+            mouseY = (e.getY() / particleSize) * particleSize;
+            createParticle();
+            repaint();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            mouseHeld = false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            mouseX = (e.getX() / particleSize) * particleSize;
+            mouseY = (e.getY() / particleSize) * particleSize;
+            createParticle();
+            repaint();
+        }
+    };
+
+    public void update() {
+        ArrayList<Particle> shuffledList = new ArrayList<>(particleList);
+        Collections.shuffle(shuffledList);
+
+        for (Particle particle : shuffledList) {
+            if (!particle.getUpdated()) {
                 int underY = particle.getY() + particleSize;
                 boolean isGrounded = underY > getHeight() - particleSize ? true : false;
 
@@ -39,6 +81,7 @@ public class PhysicsPanel extends JPanel{
                         isBlockedLeftDown = true;
                     }
 
+                    boolean isBlockingSand = false;
                     //Surroundings check
                     for (int j = 0; j < particleList.size(); j++) { 
                         Particle particle2 = particleList.get(j);
@@ -46,6 +89,9 @@ public class PhysicsPanel extends JPanel{
                             if (particle.getWeight() <= particle2.getWeight()) {
                                 if (particle.getX() == particle2.getX() && particle2.getY() == underY) {
                                     isBlockedDown = true;
+                                    if (particle2 instanceof Sand) {
+                                        isBlockingSand = true;
+                                    }
                                 }
                                 if (particle.getX() + particleSize == particle2.getX() && underY == particle2.getY()) {
                                     isBlockedRightDown = true;
@@ -66,7 +112,24 @@ public class PhysicsPanel extends JPanel{
                     boolean canSlideLeftDown = !isBlockedLeftDown && !isBlockedLeftSide;
 
                     if (!isBlockedDown) {
-                        particle.setY(underY);
+                        Particle lighterBelow = null;
+                        for (int j = 0; j < particleList.size(); j++) {
+                            Particle particle2 = particleList.get(j);
+                            if (particle2 != particle && particle.getX() == particle2.getX() && particle2.getY() == underY
+                                    && particle.getWeight() > particle2.getWeight() && particle2.getCanFall()) {
+                                lighterBelow = particle2;
+                                break;
+                            }                            
+                        }
+                        if (lighterBelow != null) {
+                            int oldY = particle.getY();
+                            particle.setY(underY);
+                            lighterBelow.setY(oldY);
+                        } 
+                        else {
+                            particle.setY(underY);
+                        }
+
                         if (particle instanceof Water) {
                             Water water = (Water) particle;
                             water.setFlowDirection(-1);
@@ -84,6 +147,11 @@ public class PhysicsPanel extends JPanel{
                                 particle.setX(particle.getX() - particleSize);
                             }
                         }
+                        if (!isBlockingSand) {
+                            particleList.remove(particle);
+                            repaint();
+                        }
+                        
                         if (canSlideLeftDown && !canSlideRightDown) {
                             particle.setX(particle.getX() - particleSize);
                             particle.setY(underY);
@@ -107,20 +175,12 @@ public class PhysicsPanel extends JPanel{
                 }
                 else if (particle instanceof Smoke) {
                     Smoke smoke = (Smoke) particle;
-                    smoke.incrementAge();
 
-                    if (smoke.getAge() >= smoke.getMaxAge()) {
-                        particleList.remove(i);
+                    if (!particleList.contains(particle)) {
                         continue;
                     }
 
                     int aboveY = particle.getY() - particleSize;
-                    boolean isCeiling = aboveY < 0;
-
-                    if (isCeiling) {
-                        particleList.remove(i);
-                        continue;
-                    }
 
                     Random random = new Random();
                     double roll = random.nextDouble();
@@ -227,40 +287,8 @@ public class PhysicsPanel extends JPanel{
                     }
                 }
             }
-            if (mouseHeld) {
-                createParticle();
-            }
-            repaint();
         }
-    });
-
-    boolean mouseHeld = false;
-    int mouseX = 0;
-    int mouseY = 0;
-
-    MouseInputAdapter mouse = new MouseInputAdapter() {
-        @Override
-        public void mousePressed(MouseEvent e) {
-            mouseHeld = true;
-            mouseX = (e.getX() / particleSize) * particleSize;
-            mouseY = (e.getY() / particleSize) * particleSize;
-            createParticle();
-            repaint();
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            mouseHeld = false;
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            mouseX = (e.getX() / particleSize) * particleSize;
-            mouseY = (e.getY() / particleSize) * particleSize;
-            createParticle();
-            repaint();
-        }
-    };
+    }
 
     boolean isOccupied(int x, int y) {
         for (int i = 0; i < particleList.size(); i++) {
@@ -301,7 +329,49 @@ public class PhysicsPanel extends JPanel{
             else if (particleMode.equals("Smoke")) {
                 particleList.add(new Smoke(mouseX, mouseY));
             }
+            else if (particleMode.equals("Seed")) {
+                particleList.add(new Seed(mouseX, mouseY));
+            }
         }
+    }
+
+    public void step() {
+        for (Particle particle : particleList) {
+            particle.setUpdated(false);
+        }
+
+        for (int i = particleList.size() - 1; i >= 0; i--) {
+            Particle p = particleList.get(i);
+            if (p instanceof Smoke) {
+                Smoke smoke = (Smoke) p;
+                smoke.incrementAge();
+                if (smoke.getAge() >= smoke.getMaxAge() || smoke.getY() - particleSize < 0) {
+                    particleList.remove(i);
+                }
+            }
+        }
+
+        for (int pass = 0; pass < 8; pass++) {
+            update();
+        }
+
+        repaint();
+    }
+
+    public void editTimer() {
+        if (isTimerEnabled) {
+            timer.stop();
+            isTimerEnabled = false;
+        }
+        else {
+            timer.start();
+            isTimerEnabled = true;
+        }
+    }
+
+    public void clearCanvas() {
+        particleList.clear();
+        repaint();
     }
 
     public String getParticleMode() {

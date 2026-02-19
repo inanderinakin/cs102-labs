@@ -157,7 +157,7 @@ public class PhysicsPanel extends JPanel{
                             if (isBlockingSand) {
                                 int seedX = particle.getX();
                                 int seedY = particle.getY();
-                                particleList.add(new Cactus(seedX, seedY));
+                                particleList.add(new Cactus(seedX, seedY, 0));
                             }
                         }
 
@@ -185,16 +185,12 @@ public class PhysicsPanel extends JPanel{
                 else if (particle instanceof Smoke) {
                     Smoke smoke = (Smoke) particle;
 
-                    if (!particleList.contains(particle)) {
-                        continue;
-                    }
-
                     int aboveY = particle.getY() - particleSize;
 
                     Random random = new Random();
-                    double roll = random.nextDouble();
+                    double prob = random.nextDouble();
 
-                    if (roll < smoke.getRiseProbability()) {
+                    if (prob < smoke.getRiseProbability()) {
                         //Rise upward
                         boolean isBlockedUp = false;
                         boolean isBlockedRightUp = false;
@@ -261,7 +257,7 @@ public class PhysicsPanel extends JPanel{
                             }
                         }
                     }
-                    else if (roll < smoke.getRiseProbability() + smoke.getSpreadProbability()) {
+                    else if (prob < smoke.getRiseProbability() + smoke.getSpreadProbability()) {
                         //Horizontal drift
                         boolean isBlockedRightSide = false;
                         boolean isBlockedLeftSide = false;
@@ -295,9 +291,88 @@ public class PhysicsPanel extends JPanel{
                         }
                     }
                 }
-                else if (particle instanceof Cactus) {
+                if (particle instanceof Cactus) {
+                    Cactus cactus = (Cactus) particle;
                     if (updateCount == 10) {
+                        Random random = new Random();
+                        int prob = random.nextInt(1, 101);
 
+                        int aboveY = particle.getY() - particleSize;
+                        boolean isBlockedUp = false;
+                        boolean isBlockedRightUp = false;
+                        boolean isBlockedLeftUp = false;
+                        boolean isBlockedRightSide = false;
+                        boolean isBlockedLeftSide = false;
+
+                        //Is particle at the ends of the panel?
+                        if (particle.getX() + particleSize >= getWidth()) { 
+                            isBlockedRightSide = true;
+                            isBlockedRightUp = true;
+                        }
+                        if (particle.getX() - particleSize < 0) {
+                            isBlockedLeftSide = true;
+                            isBlockedLeftUp = true;
+                        }
+                        int surrondingCactusCount = 0;
+                        //Surroundings check
+                        for (int j = 0; j < particleList.size(); j++) { 
+                            Particle particle2 = particleList.get(j);
+                            if (particle2 != particle) {
+                                if (particle.getX() == particle2.getX() && particle2.getY() == aboveY) {
+                                    isBlockedUp = true;
+                                    if (particle2 instanceof Cactus) {
+                                        surrondingCactusCount++;
+                                    }
+                                }
+                                if (particle.getX() + particleSize == particle2.getX() && aboveY == particle2.getY()) {
+                                    isBlockedRightUp = true;
+                                    if (particle2 instanceof Cactus) {
+                                        surrondingCactusCount++;
+                                    }
+                                }
+                                if (particle.getX() - particleSize == particle2.getX() && aboveY == particle2.getY()) {
+                                    isBlockedLeftUp = true;
+                                    if (particle2 instanceof Cactus) {
+                                        surrondingCactusCount++;
+                                    }
+                                }
+                                if (particle.getX() + particleSize == particle2.getX() && particle.getY() == particle2.getY()) {
+                                    isBlockedRightSide = true;
+                                    if (particle2 instanceof Cactus) {
+                                        surrondingCactusCount++;
+                                    }
+                                }
+                                if (particle.getX() - particleSize == particle2.getX() && particle.getY() == particle2.getY()) {
+                                    isBlockedLeftSide = true;
+                                    if (particle2 instanceof Cactus) {
+                                        surrondingCactusCount++;
+                                    }
+                                }
+                            }
+                        }
+                        if (cactus.getGrowthLevel() < 8 && surrondingCactusCount <= 2) {
+                            if (!isBlockedUp) {
+                                if (prob > 90) {
+                                    particleList.add(new Cactus(cactus.getX(), cactus.getY() - particleSize, cactus.getGrowthLevel() + 1));
+                                    cactus.setGrowthLevel(cactus.growthLevel + 1);
+                                }
+                            }
+                            if (isBlockedUp && !isBlockedLeftUp) {
+                                int leftProb = random.nextInt(0, 101);
+                                if (leftProb > 95) {
+                                    particleList.add(new Cactus(cactus.getX() - particleSize, cactus.getY() - particleSize, cactus.getGrowthLevel() + 1));
+                                    cactus.setGrowthLevel(cactus.growthLevel + 1);
+                                }
+                            }   
+                            else if (isBlockedUp && isBlockedLeftUp && !isBlockedRightUp){
+                                int rightProb = random.nextInt(0, 101);
+                                if (rightProb > 95) {
+                                    particleList.add(new Cactus(cactus.getX() + particleSize, cactus.getY() - particleSize, cactus.getGrowthLevel() + 1));
+                                    cactus.setGrowthLevel(cactus.growthLevel + 1);
+                                }
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -335,20 +410,28 @@ public class PhysicsPanel extends JPanel{
 
     public void createParticle() {
         if (!isOccupied(mouseX, mouseY)) {
-            if (particleMode.equals("Sand")) {
-                particleList.add(new Sand(mouseX, mouseY));
-            }
-            else if (particleMode.equals("Stone")) {
-                particleList.add(new Stone(mouseX, mouseY));
-            }
-            else if (particleMode.equals("Water")) {
-                particleList.add(new Water(mouseX, mouseY));
-            }
-            else if (particleMode.equals("Smoke")) {
-                particleList.add(new Smoke(mouseX, mouseY));
-            }
-            else if (particleMode.equals("Seed")) {
-                particleList.add(new Seed(mouseX, mouseY));
+            CreateParticleAsCircle(mouseX, mouseY, 2);
+        }
+    }
+
+    public void CreateParticleAsCircle(int centerX, int centerY, int radius) {
+        for (int r = centerX - radius; r < centerX + (radius * 2); r++) {
+            for (int c = centerY - radius; r < centerY + (radius * 2); c++) {
+                if (particleMode.equals("Sand")) {
+                    particleList.add(new Sand(r, c));
+                }
+                else if (particleMode.equals("Stone")) {
+                    particleList.add(new Stone(r, c));
+                }
+                else if (particleMode.equals("Water")) {
+                    particleList.add(new Water(r, c));
+                }
+                else if (particleMode.equals("Smoke")) {
+                    particleList.add(new Smoke(r, c));
+                }
+                else if (particleMode.equals("Seed")) {
+                    particleList.add(new Seed(r, c));
+                }
             }
         }
     }

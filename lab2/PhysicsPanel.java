@@ -38,8 +38,6 @@ public class PhysicsPanel extends JPanel{
             mouseHeld = true;
             mouseX = (e.getX() / particleSize) * particleSize;
             mouseY = (e.getY() / particleSize) * particleSize;
-            createParticle();
-            repaint();
         }
 
         @Override
@@ -415,22 +413,29 @@ public class PhysicsPanel extends JPanel{
     }
 
     public void CreateParticleAsCircle(int centerX, int centerY, int radius) {
-        for (int r = centerX - radius; r < centerX + (radius * 2); r++) {
-            for (int c = centerY - radius; r < centerY + (radius * 2); c++) {
-                if (particleMode.equals("Sand")) {
-                    particleList.add(new Sand(r, c));
-                }
-                else if (particleMode.equals("Stone")) {
-                    particleList.add(new Stone(r, c));
-                }
-                else if (particleMode.equals("Water")) {
-                    particleList.add(new Water(r, c));
-                }
-                else if (particleMode.equals("Smoke")) {
-                    particleList.add(new Smoke(r, c));
-                }
-                else if (particleMode.equals("Seed")) {
-                    particleList.add(new Seed(r, c));
+        for (int r = -radius; r <= radius; r++) {
+            for (int c = -radius; c <= radius; c++) {
+                double hypo = Math.sqrt(r * r + c * c);
+                if (hypo <= radius) {
+                    int x = centerX + r * particleSize;
+                    int y = centerY + c * particleSize;
+                    if (!isOccupied(x, y)) {
+                        if (particleMode.equals("Sand")) {
+                            particleList.add(new Sand(x, y));
+                        }
+                        else if (particleMode.equals("Stone")) {
+                            particleList.add(new Stone(x, y));
+                        }
+                        else if (particleMode.equals("Water")) {
+                            particleList.add(new Water(x, y));
+                        }
+                        else if (particleMode.equals("Smoke")) {
+                            particleList.add(new Smoke(x, y));
+                        }
+                        else if (particleMode.equals("Seed")) {
+                            particleList.add(new Seed(x, y));
+                        }
+                    }
                 }
             }
         }

@@ -3,7 +3,9 @@ import java.awt.Color;
 public abstract class Particle {
     private int x = 0;
     private int y = 0;
-    private static int size = 4;
+    private static int size = 15;
+    protected int weight;
+    protected boolean canFall;
     Color color;
 
     public Particle(int x, int y, Color color) {
@@ -26,6 +28,14 @@ public abstract class Particle {
 
     public Color getColor() {
         return color;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public boolean getCanFall() {
+        return canFall;
     }
 
     public void setX(int x) {

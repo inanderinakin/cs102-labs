@@ -136,7 +136,7 @@ public class PhysicsPanel extends JPanel{
                         }
                     }
                     else {
-                        if (particle instanceof Water) {
+                        if (particle instanceof Water && !canSlideLeftDown && !canSlideRightDown) {
                             Water water = (Water) particle;
                             water.updateFlowDirection(isBlockedLeftSide, isBlockedRightSide);
                             int direction = water.getFlowDirection();
@@ -147,11 +147,10 @@ public class PhysicsPanel extends JPanel{
                                 particle.setX(particle.getX() - particleSize);
                             }
                         }
-                        if (!isBlockingSand) {
-                            particleList.remove(particle);
-                            repaint();
+                        else if (particle instanceof Water) {
+                            ((Water) particle).setFlowDirection(-1);
                         }
-                        
+
                         if (canSlideLeftDown && !canSlideRightDown) {
                             particle.setX(particle.getX() - particleSize);
                             particle.setY(underY);
